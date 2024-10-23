@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import org.junit.jupiter.api.Test;
 
 // 2 - Classe
-public class TestUser {
+public class TestPet {
     // 2.1 Atributos
 
     static String ct = "application/json"; // Content type
