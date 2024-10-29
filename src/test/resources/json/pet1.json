@@ -1,0 +1,16 @@
+{
+    "id": 390933801,
+    "category": {
+      "id": 1,
+      "name": "cachorro"
+    },
+    "name": "Snoop",
+    "photoUrls": [],
+    "tags": [
+      {
+        "id": 9,
+        "name": "vacinado"
+      }
+    ],
+    "status": "available"
+  }
