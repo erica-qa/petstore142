@@ -3,6 +3,7 @@
 // 1 - bibliotecas
  
 import static io.restassured.RestAssured.given; // função given
+import static io.restassured.RestAssured.head;
 // Classe de verificadores do Hamcrest
 import static org.hamcrest.Matchers.is;
 
@@ -14,6 +15,12 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+
+import com.google.gson.Gson;
+
+//import groovyjarjarpicocli.CommandLine.Parameters;
  
 // 2 - classe
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class) // Ativa a ordenação
@@ -68,10 +75,12 @@ public class TestPet {
     public void testGetPet(){
         // Configura
         // Entrada e Saidas definidas no nível da classe
-         
+                
         given()
             .contentType(ct)
             .log().all()
+            .header("", "api_key: " + TestUser.testLogin())
+
             // quando é get ou delete não tem body
         // Executa
         .when()
@@ -132,5 +141,49 @@ public void testDeletePet(){
     ;
 }
 
+// Data Driven Testing (DDT) - Teste direcionado por dados ou Teste com Massa
+// Também chamado de Teste com Json parametrizado
+
+@ParameterizedTest @Order(5)
+@CsvFileSource(resources = "/csv/petMassa.csv", numLinesToSkip = 1, delimiter = ',')
+public void testPostPetDDT(
+    int petId,
+    String petName,
+    int catId,
+    String catName,
+    String status1,
+    String status2
+)// Fim dos parâmetros
+{// Início do Código do Método testPostPetDDT
+
+    // Criar a classe pet para receber os dados do csv - Pet = Classe e pet = objeto
+    Pet pet = new Pet(); // Instancia a classe Pet como o objeto pet
+
+    pet.petId = petId; // comunica dado da classe com dado do parâmetro(csv)
+    pet.petName = petName;
+    pet.catId = catId;
+    pet.catName = catName;
+    pet.status = status1; // status inicial usado no Post = "available"
+
+    // Criar um Json para o body a ser enviado a partir da classe Pet e do CSV
+    Gson gson = new Gson(); // Instancia a classe "Gson" como o objeto "gson"
+    String jsonBody = gson.toJson(pet);
+
+    given()
+        .contentType(ct)
+        .log().all()
+        .body(jsonBody)
+    .when()
+        .post(uriPet)
+    .then()
+        .log().all()
+        .statusCode(200)
+        .body("id", is(petId))
+        .body("name", is(petName))
+        .body("category.id", is(catId))
+        .body("category.name", is(catName))
+        .body("status", is(status1)) // inicial do Post
+    ;
+}
 
 }
