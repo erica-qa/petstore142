@@ -3,7 +3,7 @@
 // 1 - bibliotecas
  
 import static io.restassured.RestAssured.given; // função given
-import static io.restassured.RestAssured.head;
+//import static io.restassured.RestAssured.head;
 // Classe de verificadores do Hamcrest
 import static org.hamcrest.Matchers.is;
 
@@ -19,6 +19,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
 import com.google.gson.Gson;
+
+//import groovy.lang.Category;
 
 //import groovyjarjarpicocli.CommandLine.Parameters;
  
@@ -158,12 +160,24 @@ public void testPostPetDDT(
 
     // Criar a classe pet para receber os dados do csv - Pet = Classe e pet = objeto
     Pet pet = new Pet(); // Instancia a classe Pet como o objeto pet
-
-    pet.petId = petId; // comunica dado da classe com dado do parâmetro(csv)
-    pet.petName = petName;
-    pet.catId = catId;
-    pet.catName = catName;
+    Pet.Category category = pet.new Category(); // Instancia a subclasse Category
+    Pet.Tag[] tags = new Pet.Tag[2]; // Instancia a subclasse Tag
+    tags[0] = pet.new Tag();
+    tags[1] = pet.new Tag();
+    
+    pet.id = petId; // comunica dado da classe com dado do parâmetro(csv)
+    pet.category = category;
+    pet.category.id = catId;
+    pet.category.name = catName;
+    pet.name = petName;
+    //pet.photoUrls não precisa ser incluído, porque será vazio
+    pet.tags = tags;
+    pet.tags[0].id = 9;
+    pet.tags[0].name= "vacinado";
+    pet.tags[1].id = 8;
+    pet.tags[1].name= "vermifugado";
     pet.status = status1; // status inicial usado no Post = "available"
+
 
     // Criar um Json para o body a ser enviado a partir da classe Pet e do CSV
     Gson gson = new Gson(); // Instancia a classe "Gson" como o objeto "gson"
@@ -185,5 +199,4 @@ public void testPostPetDDT(
         .body("status", is(status1)) // inicial do Post
     ;
 }
-
 }

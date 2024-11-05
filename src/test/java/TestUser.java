@@ -3,7 +3,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-import java.rmi.StubNotFoundException;
+//import java.rmi.StubNotFoundException;
 
 import static org.hamcrest.Matchers.hasLength;
 
